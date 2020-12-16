@@ -39,6 +39,7 @@ public class login_panel {
 	private JTextField login_field;
 	private JTextField password_field;
 	public static String logged_user = "";
+	public static String logged_userName = "";
 	/**
 	 * Launch the application.
 	 */
@@ -236,6 +237,7 @@ public class login_panel {
 				}	
                 String userlogin = "";
                 String userpassword = "";
+                String userName = "";
                 try {
                   
                 	MysqlConnect mysqlConnect = new MysqlConnect();
@@ -247,10 +249,12 @@ public class login_panel {
 						 while (rs.next()) {
 		                        userlogin = rs.getString("Login");
 		                        userpassword = rs.getString("Password");
+		                        userName = rs.getString("Name");
 		                    }
 						 if (login_login.equals(userlogin) && login_password.equals(userpassword)) {
 		                        System.out.println("Successful Login!\n----");
 		                        logged_user = userlogin;
+		                        logged_userName = userName;
 		                        main_panel mpanel = new main_panel();
 		        				mpanel.frame.setVisible(true);
 		        				frame.dispose();
@@ -282,3 +286,4 @@ public class login_panel {
 	
 	}
 }
+
