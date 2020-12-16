@@ -42,8 +42,8 @@ public wyswietlanie_baz() {
 			
 		
 			System.out.println(count);
-		 Utwory = new String[count][3];
-		 resultSet=statement.executeQuery("SELECT  NameID, Album, ArtistID FROM songs");
+		 Utwory = new String[count][4];
+		 resultSet=statement.executeQuery("SELECT  NameID, Album, ArtistID, Directory FROM songs");
 		 writeResultSet(resultSet,count,Utwory);
 			connect.close();
 			System.out.println("Connection closed");
@@ -66,6 +66,7 @@ public wyswietlanie_baz() {
 		
 			tb[i][1]=resultSet.getString("NameID");
 			tb[i][2]=resultSet.getString("Album");
+			tb[i][3]=resultSet.getString("Directory");
 			i++;
 		
 		}

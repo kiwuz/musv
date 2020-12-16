@@ -6,6 +6,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.security.*;
 
 import javax.swing.ImageIcon;
@@ -338,7 +339,7 @@ public class register {
 				String register_password = password_field.getText();
                 String register_name = name_field.getText();
                 String register_gender = (String) gender_combo_box.getSelectedItem();
-                
+        
                 password_rules passchcker = new password_rules();
                 passchcker.passwordChecker(register_password);
                 if (passchcker.warnings != "")
@@ -355,13 +356,15 @@ public class register {
 					e2.printStackTrace();
 				}	
                 MysqlConnect mysqlConnect = new MysqlConnect();
-                String insertTableSQL = "INSERT INTO User"+"(Login,Password,Name,Gender)"+" VALUES"+"('"+register_login+"','"+register_password+"','"+register_name+"','"+register_gender+"')";
-    
+                String insertTableSQL = "INSERT INTO User"+"(Login,Password,Name,Gender,Type)"+" VALUES"+"('"+register_login+"','"+register_password+"','"+register_name+"','"+register_gender+"')";
+                   
                 
                 try {
                    // PreparedStatement statement =  mysqlConnect.connect().prepareStatement(insertTableSQL);
                     PreparedStatement statement = mysqlConnect.connect().prepareStatement(insertTableSQL);
                    statement.execute(insertTableSQL);
+                   
+              
                    
                    JOptionPane.showMessageDialog(
                	        null, "Account created", "Complete", JOptionPane.DEFAULT_OPTION);

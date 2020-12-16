@@ -208,6 +208,7 @@ public class login_panel {
 		donthaveacc_button.setContentAreaFilled(false);
 		frame.getContentPane().add(donthaveacc_button);
 		
+		
 		JRadioButton showpass_button = new JRadioButton("");
 		showpass_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

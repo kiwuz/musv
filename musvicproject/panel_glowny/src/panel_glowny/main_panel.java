@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -33,18 +34,23 @@ import panel_glowny.MysqlConnect;
 
 import javax.swing.JProgressBar;
 import java.awt.FlowLayout;
+import javax.swing.JToggleButton;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.Component;
 
 public class main_panel implements ChangeListener {
 	private boolean isPaused = false;
 	private boolean isFirst = true;
 	private int framePos = 0;
-	private float volume = -20.0f;
+	private float volume = -10.0f;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	JFrame frame;
 	private String fullSongPath;
 	private Audio song;
 	private final JSeparator separator = new JSeparator();
-	
+	final static JLabel speaker_image = new JLabel();
 	/**
 	 * Launch the application.
 	 */
@@ -234,21 +240,14 @@ public class main_panel implements ChangeListener {
 		full_song_time.setBounds(979, 8, 37, 22);
 		player_panel.add(full_song_time);
 		
-		JSlider volume_slider = new JSlider(-75,5,-20);
+		JSlider volume_slider = new JSlider(-75,75,0);
 		volume_slider.setBounds(1082, 8, 200, 26);
 		player_panel.add(volume_slider);
 		volume_slider.addChangeListener(this);
 		
-		JLabel speaker_image = new JLabel("");
-
-		if (volume_slider.getValue()==0)
-		{
-		speaker_image.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/unvolume.png")));
-		}
-		else
-		{
+		//final JLabel speaker_image = new JLabel("");
 		speaker_image.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/volume.png")));
-		}
+		
 		
 		speaker_image.setBounds(1040, 8, 30, 30);
 		player_panel.add(speaker_image);
@@ -261,6 +260,7 @@ public class main_panel implements ChangeListener {
 					song.stop();
 					playpause_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/play.png")));
 					isPaused = true;
+					System.out.print(framePos);
 				}
 				else
 				{
@@ -278,7 +278,7 @@ public class main_panel implements ChangeListener {
 		player_panel.add(playpause_button);
 		
 		JProgressBar progressBar = new JProgressBar();
-		progressBar.setBounds(261, 8, 654, 27);
+		progressBar.setBounds(295, 8, 620, 27);
 		player_panel.add(progressBar);
 		
 		JLabel song_played_time = new JLabel();
@@ -286,6 +286,19 @@ public class main_panel implements ChangeListener {
 		song_played_time.setFont(new Font("Source Sans Pro", Font.BOLD, 13));
 		song_played_time.setBounds(950, 8, 26, 22);
 		player_panel.add(song_played_time);
+		
+		JButton loop_button = new JButton("");
+		loop_button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				song.loop();
+			}
+		});
+		loop_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/loop.png")));
+		loop_button.setOpaque(false);
+		loop_button.setContentAreaFilled(false);
+		loop_button.setBorderPainted(false);
+		loop_button.setBounds(246, 3, 37, 37);
+		player_panel.add(loop_button);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(0, 60, 1294, 692);
@@ -456,16 +469,19 @@ public class main_panel implements ChangeListener {
 		panel_9.setPreferredSize(new Dimension(1300, 40));
 		panel_9.setBackground(Color.GRAY);
 		panel_music.add(panel_9);
-		panel_9.setLayout(new FlowLayout(FlowLayout.CENTER, 275, 10));
-		JLabel lblSong = new JLabel("Artist");
-		lblSong.setForeground(Color.WHITE);
-		lblSong.setFont(new Font("Sitka Text", Font.BOLD, 24));
-		panel_9.add(lblSong);
+		panel_9.setLayout(null);
+		JLabel lblArtist = new JLabel("Artist");
+		lblArtist.setBounds(198, 5, 69, 31);
+		lblArtist.setForeground(Color.WHITE);
+		lblArtist.setFont(new Font("Sitka Text", Font.BOLD, 24));
+		panel_9.add(lblArtist);
 		JLabel lblAlbum_1 = new JLabel("Song");
+		lblAlbum_1.setBounds(600, 5, 57, 31);
 		lblAlbum_1.setForeground(Color.WHITE);
 		lblAlbum_1.setFont(new Font("Sitka Text", Font.BOLD, 24));
 		panel_9.add(lblAlbum_1);
 		JLabel lblName = new JLabel("Album");
+		lblName.setBounds(1000, 5, 77, 31);
 		lblName.setForeground(Color.WHITE);
 		lblName.setFont(new Font("Sitka Text", Font.BOLD, 24));
 		panel_9.add(lblName);
@@ -501,10 +517,44 @@ public class main_panel implements ChangeListener {
 			}
 		});
 		
-		JLabel lblAlbums = new JLabel("albums");
-		lblAlbums.setFont(new Font("Source Sans Pro", Font.PLAIN, 28));
-		lblAlbums.setBounds(298, 193, 337, 173);
-		albums_panel.add(lblAlbums);
+		
+	
+		
+		JPanel panel_music_1 = new JPanel();
+		panel_music_1.setBounds(0, 0, 1300, 1500);
+		//albums_panel.add(panel_music_1);
+		panel_music_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panel_music_1.setPreferredSize(new Dimension(1300, 1500));
+		
+		JPanel panel_9_1 = new JPanel();
+		panel_9_1.setLayout(null);
+		panel_9_1.setPreferredSize(new Dimension(1300, 40));
+		panel_9_1.setBackground(Color.GRAY);
+		panel_music_1.add(panel_9_1);
+		
+		JLabel lblArtist_1 = new JLabel("Artist");
+		lblArtist_1.setForeground(Color.WHITE);
+		lblArtist_1.setFont(new Font("Sitka Text", Font.BOLD, 24));
+		lblArtist_1.setBounds(198, 5, 69, 31);
+		panel_9_1.add(lblArtist_1);
+		
+		JLabel lblAlbum_1_1 = new JLabel("Song");
+		lblAlbum_1_1.setForeground(Color.WHITE);
+		lblAlbum_1_1.setFont(new Font("Sitka Text", Font.BOLD, 24));
+		lblAlbum_1_1.setBounds(600, 5, 57, 31);
+		panel_9_1.add(lblAlbum_1_1);
+		
+		JLabel lblName_1 = new JLabel("Album");
+		lblName_1.setForeground(Color.WHITE);
+		lblName_1.setFont(new Font("Sitka Text", Font.BOLD, 24));
+		lblName_1.setBounds(1000, 5, 77, 31);
+		panel_9_1.add(lblName_1);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setBounds(0, 0, 1294, 700);
+		scrollPane.setViewportView(panel_music_1);
+		albums_panel.add(scrollPane);
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBounds(0, 0, 282, 60);
@@ -619,6 +669,7 @@ public class main_panel implements ChangeListener {
 				song.stop();
 				song.close();
 				}
+				login_panel.logged_user = "";
 				Logingui mlogin = new Logingui();
 				mlogin.frame.setVisible(true);
 				frame.dispose();
@@ -663,8 +714,10 @@ public class main_panel implements ChangeListener {
 		int baza_count = wyswietlanie_baz.count;
 
 		System.out.println(baza_count);
-		addSongs(baza_count,panel_music);
-		
+		addSongs(baza_count,panel_music, playpause_button, full_song_time);
+		addSongs(baza_count, panel_music_1, playpause_button, full_song_time);
+	
+
 		
 		JRadioButton selectLightThemeButton = new JRadioButton("jasny");
 		selectLightThemeButton.addActionListener(new ActionListener() { //zmiana dla jasnego motywu
@@ -741,8 +794,9 @@ public class main_panel implements ChangeListener {
 	
 	
 	
-	public void playSong(String song_directory)
+	public void playSong(String song_name)
 	{
+		
 		if (!isFirst)
 		{
 		song.stop();
@@ -753,7 +807,9 @@ public class main_panel implements ChangeListener {
 		isFirst = false;
 		}
 		try {
-			song = new Audio(song_directory);
+			
+			//System.out.print(url);
+			song = new Audio(song_name);
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -771,6 +827,18 @@ public class main_panel implements ChangeListener {
 		} while (isPaused);
 	}
 	
+	public void muted_vol(JSlider volume_slider)
+	{
+		if (volume_slider.getValue()==-75.0)
+		{
+		speaker_image.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/unvolume.png")));
+		
+		}
+		else
+		{
+		speaker_image.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/volume.png")));
+		}
+	}
 	
 	@Override
 	public void stateChanged(ChangeEvent e) {
@@ -778,38 +846,64 @@ public class main_panel implements ChangeListener {
 		JSlider source = (JSlider)e.getSource();
         volume = source.getValue();    
         song.changeVolume(volume);
-        
+        muted_vol(source);
         
        
 	}
 	
-	public void addSongs (int x,JPanel nazwa_panelu)
+	public void addSongs (int x,JPanel nazwa_panelu, JButton playbutton, JLabel song_time)
 	{ // songCount - ilsoc piosnek w bazie, nazwapanelu azwa aeludktoo bedziemy dodawac afelki z piosenkami
 		int i_pos = x;
 		
 		for(int i=0;i<i_pos;i++) {
-			
+			final int index = i;
 			
 			JPanel panel_9 = new JPanel();
+			JButton bttnPlay = new JButton();
+			bttnPlay.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/play-button.png")));
+			bttnPlay.setSize(25, 25);
+			bttnPlay.setOpaque(false);
+			bttnPlay.setContentAreaFilled(false);
+			bttnPlay.setBorderPainted(false);
+			bttnPlay.setBounds(10,5, 30, 30);
+			bttnPlay.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//playSong(wyswietlanie_baz.Utwory[index][3]);
+					playSong((System.getProperty("user.dir") + wyswietlanie_baz.Utwory[index][3]));
+					playbutton.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pause.png")));
+					song_time.setText("/ " + song.clipLength());
+					//full_song_time.setText("/ " + song.clipLength());
+					/*do {
+						String PosRN = Float.toString((float)song.getFramePosition());
+						song_played_time.setText(PosRN);
+						} while (isPaused=true);*/
+				}
+				});
+			panel_9.add(bttnPlay);
 			panel_9.setPreferredSize(new Dimension(1300, 40));
 			panel_9.setBackground(Color.GRAY);
 			nazwa_panelu.add(panel_9);
-			panel_9.setLayout(new FlowLayout(FlowLayout.CENTER, 200, 10));
-			JLabel lblSong = new JLabel(wyswietlanie_baz.Utwory[i][0]);
-			lblSong.setFont(new Font("Sitka Text", Font.BOLD, 16));
-			lblSong.setForeground(Color.WHITE);
+			//panel_9.setLayout(new FlowLayout(FlowLayout.LEFT, 200, 0));
+			panel_9.setLayout(null);
+			JLabel lblArtist  = new JLabel(wyswietlanie_baz.Utwory[i][0]);
+			lblArtist.setFont(new Font("Sitka Text", Font.BOLD, 18));
+			lblArtist.setForeground(Color.WHITE);
+			lblArtist.setBounds(200, 10, 400, 20);
+			panel_9.add(lblArtist);
+			JLabel lblSong = new JLabel(wyswietlanie_baz.Utwory[i][1]);
+			lblSong.setFont(new Font("Sitka Text", Font.BOLD, 18));
+			lblSong.setBounds(600, 10, 400, 20);
 			panel_9.add(lblSong);
-			JLabel label_19 = new JLabel(wyswietlanie_baz.Utwory[i][1]);
-			label_19.setFont(new Font("Sitka Text", Font.BOLD, 16));
-			panel_9.add(label_19);
-			label_19.setForeground(Color.WHITE);
-			JLabel label_20 = new JLabel(wyswietlanie_baz.Utwory[i][2]);
-			label_20.setFont(new Font("Sitka Text", Font.BOLD, 16));
-			label_20.setForeground(Color.WHITE);
-			panel_9.add(label_20);
+			lblSong.setForeground(Color.WHITE);
+			JLabel lblAlbum = new JLabel(wyswietlanie_baz.Utwory[i][2]);
+			lblAlbum.setFont(new Font("Sitka Text", Font.BOLD, 18));
+			lblAlbum.setForeground(Color.WHITE);
+			lblAlbum.setBounds(1000, 10, 400, 20);
+			panel_9.add(lblAlbum);
 			
 
 	}
 	}
+	
 }
 
