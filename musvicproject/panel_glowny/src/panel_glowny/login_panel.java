@@ -38,8 +38,8 @@ public class login_panel {
 	JFrame frame;
 	private JTextField login_field;
 	private JTextField password_field;
-	public static String logged_user = "";
-	public static String logged_userName = "";
+	public static String temporaryLogin  = "";
+	public static String temporaryLoginName = "";
 	/**
 	 * Launch the application.
 	 */
@@ -253,8 +253,8 @@ public class login_panel {
 		                    }
 						 if (login_login.equals(userlogin) && login_password.equals(userpassword)) {
 		                        System.out.println("Successful Login!\n----");
-		                        logged_user = userlogin;
-		                        logged_userName = userName;
+		                        temporaryLogin = userlogin;
+		                        temporaryLoginName = userName;
 		                        main_panel mpanel = new main_panel();
 		        				mpanel.frame.setVisible(true);
 		        				frame.dispose();

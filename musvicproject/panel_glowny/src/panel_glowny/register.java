@@ -157,8 +157,8 @@ public class register {
 				}
 			}
 		});
-		password_field.addActionListener(new ActionListener() {
-		    @Override
+		/*password_field.addActionListener(new ActionListener() {
+		  //  @Override
 		    public void actionPerformed(ActionEvent event) {
 		        JPasswordField field = (JPasswordField) event.getSource();
 		        char[] password = field.getPassword();
@@ -175,7 +175,7 @@ public class register {
 		            System.out.print("Password must contain at least one uppercase character!");
 		        }
 		    }
-		});
+		});*/
 		password_field.setText("Password");
 		password_field.setOpaque(false);
 		password_field.setForeground(new Color(240, 255, 255));
@@ -356,7 +356,7 @@ public class register {
 					e2.printStackTrace();
 				}	
                 MysqlConnect mysqlConnect = new MysqlConnect();
-                String insertTableSQL = "INSERT INTO User"+"(Login,Password,Name,Gender,Type)"+" VALUES"+"('"+register_login+"','"+register_password+"','"+register_name+"','"+register_gender+"')";
+                String insertTableSQL = "INSERT INTO User"+"(Login,Password,Name,Gender)"+" VALUES"+"('"+register_login+"','"+register_password+"','"+register_name+"','"+register_gender+"')";
                    
                 
                 try {

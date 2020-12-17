@@ -8,11 +8,13 @@ import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 import java.io.IOException;
 import java.net.URL;
-
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -26,17 +28,26 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.io.FileUtils;
+
 import panel_glowny.MysqlConnect;
 
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+
 import java.awt.FlowLayout;
 import javax.swing.JToggleButton;
 import javax.swing.JScrollBar;
@@ -53,11 +64,94 @@ public class main_panel implements ChangeListener {
 	JFrame frame;
 	private String fullSongPath;
 	private Audio song;
+	private JTable table;
+	private JPasswordField passwordField;
+	private JTextField nameTextField;
 	private final JSeparator separator = new JSeparator();
 	final static JLabel speaker_image = new JLabel();
+	private JPopupMenu popupMenu;
 	/**
 	 * Launch the application.
 	 */
+	
+	private void showHiddenMenu() {
+		if(MysqlConnect.getIntFromSQL(login_panel.temporaryLogin, "Type") == 1) {
+			
+			popupMenu = new JPopupMenu();
+			popupMenu.setBounds(0, 0, 16, 43);
+			frame.getContentPane().add(popupMenu);
+			JButton getToAdminPanel = new JButton();
+			getToAdminPanel.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					adminPanel newPanel = new adminPanel();
+					frame.dispose();
+				}
+			});
+			getToAdminPanel.setText("ADMIN PANEL");
+			popupMenu.add(getToAdminPanel);
+			
+			frame.addMouseListener(new MouseAdapter() {
+		         public void mouseReleased(MouseEvent me) {
+		            showPopup(me); // showPopup() is our own user-defined method
+		         }
+		      }) ;
+			
+		}
+	}
+	
+	public static void copyFile(String from) throws IOException {
+		File source = new File(from);
+		String adres = "src\\panel_glowny\\img\\userImage\\" + login_panel.temporaryLogin +".jpg";
+		File destiny = new File(adres);
+		try {
+			FileUtils.copyFile(source, destiny);
+			MysqlConnect.sendStringToSQL(adres, login_panel.temporaryLogin);
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public String wstawObrazek(JLabel author_image) {
+		JFileChooser selectPhotoChooser = new JFileChooser();
+		System.out.println(selectPhotoChooser.showSaveDialog(null));
+		int responseFromButton = selectPhotoChooser.showOpenDialog(null);
+			if(responseFromButton == JFileChooser.APPROVE_OPTION) 
+			{
+				File file = new File(selectPhotoChooser.getSelectedFile().getAbsolutePath());
+				String userImage = file.toString();
+				System.out.println(userImage);
+				if(file.getName().endsWith(".jpg") || file.getName().endsWith(".png")) { //warunek ¿e wstawione zostanie tylko zdjecie
+					System.out.println("Otworzono zdjêcie");	
+					author_image.setIcon(new ImageIcon(userImage));
+					return userImage;
+				}
+				else System.out.println("Nieprawid³owy format pliku");
+				}
+			return "";
+	}
+	
+	public String setAccountType(String login) {
+		String type = "";
+		
+		String accountType = MysqlConnect.getStringFromSQL(login, "Type");
+		
+		switch(accountType) {
+		case "0":
+			type = "User";
+			break;
+		case "1":
+			type = "Admin";
+			break;
+		case "2":
+			type = "SuperAdmin";
+			break;
+		}
+		return type;
+		
+	}
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -88,24 +182,23 @@ public class main_panel implements ChangeListener {
 			
 		MysqlConnect mysqlConnect = new MysqlConnect();		
 		mysqlConnect.connect();
-		System.out.print(login_panel.logged_user);
+		System.out.print(login_panel.temporaryLogin);
 		
 		mysqlConnect.getTitleFromSQL();
 		mysqlConnect.getimgLocation();
 		mysqlConnect.getSelectedLanguage();
-		
 		ResourceBundle rb;
 		if(mysqlConnect.language == 0) {
 			Locale.setDefault(new Locale ("pl","PL"));
 			rb = ResourceBundle.getBundle("language/cfg/resource_bundle");
 			System.out.println(rb.getString("language"));
-			System.out.println("Załadowny jezyk " + (rb.getString("language")));
+			System.out.println("ZaĹ‚adowny jezyk " + (rb.getString("language")));
 			
 		}
 		else {
 			Locale.setDefault(new Locale ("en","EN"));
 			rb = ResourceBundle.getBundle("language/cfg/resource_bundle");
-			System.out.println("Załadowny jezyk " + (rb.getString("language")));
+			System.out.println("ZaĹ‚adowny jezyk " + (rb.getString("language")));
 		}
 		
 		
@@ -129,33 +222,24 @@ public class main_panel implements ChangeListener {
 		myacc_panel.setLayout(null);
 		
 		JLabel author_image = new JLabel("");
-		author_image.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/profile_pic/default_img.png")));
-		author_image.setBounds(55, 30, 160, 160);
+		author_image.setBounds(25, 10, 235, 279);
 		myacc_panel.add(author_image);
+		author_image.setIcon(new ImageIcon(MysqlConnect.getStringFromSQL(login_panel.temporaryLogin, "adresObrazka")));
 		
-		JButton changePhotoButton = new JButton("Zmie\u0144 zdj\u0119cie profilowe");
-		changePhotoButton.setLocation(272, 27);
+		
+
+		JButton changePhotoButton = new JButton("Zmien zdjecie profilowe");
+		changePhotoButton.setLocation(929, 35);
 		changePhotoButton.setFont(new Font("Calibri", Font.BOLD, 14));
-		changePhotoButton.setSize(171, 56);
+		changePhotoButton.setSize(300, 200);
+		
 		changePhotoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(e.getSource() == changePhotoButton) {
 					try {
-					JFileChooser selectPhotoChooser = new JFileChooser();
-					System.out.println(selectPhotoChooser.showOpenDialog(null));
-					int responseFromButton = selectPhotoChooser.showOpenDialog(null);
-						if(responseFromButton == JFileChooser.APPROVE_OPTION) 
-						{
-							File file = new File(selectPhotoChooser.getSelectedFile().getAbsolutePath());
-							String userImage = file.toString();
-							System.out.println(userImage);
-							
-							if(file.getName().endsWith(".jpg") || file.getName().endsWith(".png")) { //warunek ¿e wstawione zostanie tylko zdjecie
-								System.out.println("Otworzono zdjêcie");	
-								author_image.setIcon(new ImageIcon(userImage));
-						}
-						else System.out.println("Nieprawid³owy format pliku");
-						}
+						String adres = "";
+						adres = wstawObrazek(author_image);
+						copyFile(adres);
 					}
 					catch(Exception e1) {
 						e1.printStackTrace();
@@ -163,31 +247,155 @@ public class main_panel implements ChangeListener {
 				}
 			}
 		});
-		myacc_panel.add(changePhotoButton);
 		
-		JLabel login_label = new JLabel(login_panel.logged_user);
-		login_label.setFont(new Font("Source Sans Pro", Font.PLAIN, 20));
-		login_label.setBounds(282, 100, 161, 30);
-		myacc_panel.add(login_label);
+myacc_panel.add(changePhotoButton);
 		
-		JLabel login_label_1 = new JLabel("Login");
-		login_label_1.setFont(new Font("Source Sans Pro", Font.PLAIN, 20));
-		login_label_1.setBounds(308, 300, 100, 30);
-		myacc_panel.add(login_label_1);
+		JLabel sqlLogin = new JLabel("Your login:" + login_panel.temporaryLogin);
+		sqlLogin.setFont(new Font("Consolas", Font.BOLD, 16));
+		sqlLogin.setBounds(25, 312, 188, 24);
+		myacc_panel.add(sqlLogin);
 		
-		JLabel login_label_1_1 = new JLabel("Login");
-		login_label_1_1.setBounds(308, 352, 100, 30);
-		myacc_panel.add(login_label_1_1);
+		JLabel genderLabel = new JLabel("Your gender: " + MysqlConnect.getStringFromSQL(login_panel.temporaryLogin, "Gender"));
+		genderLabel.setFont(new Font("Consolas", Font.BOLD, 16));
+		genderLabel.setBounds(25, 375, 215, 24);
+		myacc_panel.add(genderLabel);
 		
-		JLabel login_label_1_1_1 = new JLabel("Login");
-		login_label_1_1_1.setBounds(308, 407, 100, 30);
-		myacc_panel.add(login_label_1_1_1);
+		JLabel SQLnameLabel = new JLabel("Your name:" + MysqlConnect.getStringFromSQL(login_panel.temporaryLogin, "Name"));
+		SQLnameLabel.setFont(new Font("Consolas", Font.BOLD, 16));
+		SQLnameLabel.setBounds(25, 341, 229, 24);
+		myacc_panel.add(SQLnameLabel);
+		
+		JLabel typeOfAccount = new JLabel("Type of account: " + setAccountType(login_panel.temporaryLogin));
+		typeOfAccount.setFont(new Font("Consolas", Font.BOLD, 16));
+		typeOfAccount.setBounds(25, 409, 252, 24);
+		myacc_panel.add(typeOfAccount);
+		
+		JLabel yourIDlabel = new JLabel("Your ID: " + MysqlConnect.getStringFromSQL(login_panel.temporaryLogin, "IDUser"));
+		yourIDlabel.setFont(new Font("Consolas", Font.BOLD, 16));
+		yourIDlabel.setBounds(25, 443, 235, 24);
+		myacc_panel.add(yourIDlabel);
+		
+		passwordField = new JPasswordField();
+		passwordField.setVisible(false);
+		passwordField.setBounds(585, 358, 206, 41);
+		myacc_panel.add(passwordField);
+		
+		
+	
+		
+		JButton acceptPassword = new JButton("Zatwierdz zmian\u0119");
+		acceptPassword.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+					String nPassword = (passwordField.getText());
+					 password_rules passchcker = new password_rules();
+		                passchcker.passwordChecker(nPassword);
+		                if (passchcker.warnings != "")
+		                {
+		                	JOptionPane.showMessageDialog(
+		                	        null, "Password should contain " + passchcker.warnings, "Failure", JOptionPane.ERROR_MESSAGE);
+		                }
+		                else
+		                {
+		                try {
+							nPassword = HashTextTest.sha1(HashTextTest.sha1(passwordField.getText()));
+							MysqlConnect.updatePassword(login_panel.temporaryLogin, nPassword);
+							JOptionPane.showMessageDialog(null, "Zmieniono haslo", "Zmiana", JOptionPane.INFORMATION_MESSAGE);
+						} catch (NoSuchAlgorithmException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						}	
+		                }
+			}
+		});
+		JLabel newPasswordLabel = new JLabel("Has\u0142o:");
+		newPasswordLabel.setVisible(false);
+		newPasswordLabel.setFont(new Font("Calibri", Font.BOLD, 14));
+		newPasswordLabel.setBounds(530, 358, 45, 41);
+		myacc_panel.add(newPasswordLabel);
+		
+		acceptPassword.setVisible(false);
+		acceptPassword.setFont(new Font("Calibri", Font.BOLD, 14));
+		acceptPassword.setBounds(617, 426, 142, 28);
+		myacc_panel.add(acceptPassword);
+		
+		JTextArea textArea = new JTextArea("Uwaga! Twoje has\u0142o powinno zawierac przynajmniej 8 znak\u00F3w, jedn\u0105 wielk\u0105 liter\u0119, cyfr\u0119 oraz znak specjalny!");
+		textArea.setVisible(false);
+		textArea.setBounds(556, 251, 317, 97);
+		textArea.setFont(new Font("Calibri", Font.BOLD, 14));
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setOpaque(false);
+        textArea.setEditable(false);
+		myacc_panel.add(textArea);
+		
+		
+		JButton btnNewButtonHaslo = new JButton("Zmie\u0144 has\u0142o");
+		btnNewButtonHaslo.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				passwordField.setVisible(true);
+				acceptPassword.setVisible(true);
+				newPasswordLabel.setVisible(true);
+				textArea.setVisible(true);
+			}
+		});
+		btnNewButtonHaslo.setFont(new Font("Calibri", Font.BOLD, 14));
+		btnNewButtonHaslo.setBounds(929, 285, 300, 169);
+		myacc_panel.add(btnNewButtonHaslo);
+		
+		
+		
+		nameTextField = new JTextField();
+		nameTextField.setVisible(false);
+		nameTextField.setBounds(585, 521, 206, 41);
+		myacc_panel.add(nameTextField);
+		nameTextField.setColumns(10);
+		
+		JButton approveButton = new JButton("Zatwierdz zmian\u0119");
+		approveButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String newName = nameTextField.getText();
+				MysqlConnect.updateStringToSQL(login_panel.temporaryLogin, "Name", newName);
+				System.out.println(MysqlConnect.getStringFromSQL(login_panel.temporaryLogin, "Name"));
+				SQLnameLabel.setText("Your name: " + newName);
+			}
+		});
+		
+		approveButton.setVisible(false);
+		approveButton.setFont(new Font("Calibri", Font.BOLD, 14));
+		approveButton.setBounds(617, 591, 142, 32);
+		myacc_panel.add(approveButton);
+		
+		JLabel nameLabel = new JLabel("Imi\u0119:");
+		nameLabel.setVisible(false);
+		nameLabel.setFont(new Font("Calibri", Font.BOLD, 14));
+		nameLabel.setBounds(535, 523, 40, 41);
+		myacc_panel.add(nameLabel);
+		
+		JButton changeNameButton = new JButton("Zmie\u0144 swoje imi\u0119");
+		changeNameButton.setFont(new Font("Calibri", Font.BOLD, 14));
+		changeNameButton.setBounds(929, 489, 300, 169);
+		myacc_panel.add(changeNameButton);
+		
+		
+		
+		
+		//action listener dla przycisku zmiany imienia
+		changeNameButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				approveButton.setVisible(true);
+				nameLabel.setVisible(true);
+				nameTextField.setVisible(true);
+			}
+		});
 		
 		JPanel mymusic_panel = new JPanel();
 		mymusic_panel.setBackground(new Color(255, 51, 204));
 		change_panel.add(mymusic_panel, "music");
 		mymusic_panel.setLayout(null);
-		
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(280, 0, 1014, 60);
@@ -430,14 +638,14 @@ public class main_panel implements ChangeListener {
 		song_name3.setBounds(129, 122, 293, 35);
 		panel_1.add(song_name3);
 		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnNewButton2 = new JButton("New button");
+		btnNewButton2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.print(song.musicTime());
+				System.out.print(song.clipLength());
 			}
 		});
-		btnNewButton.setBounds(241, 318, 97, 25);
-		panel_1.add(btnNewButton);
+		btnNewButton2.setBounds(241, 318, 97, 25);
+		panel_1.add(btnNewButton2);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBounds(0, 0, 282, 60);
@@ -687,12 +895,12 @@ public class main_panel implements ChangeListener {
 				
 				
 				
-				JLabel txtLogin = new JLabel(login_panel.logged_user);
+				JLabel txtLogin = new JLabel(login_panel.temporaryLogin);
 				txtLogin.setFont(new Font("Calibri", Font.BOLD, 17));
 				txtLogin.setBounds(922, 18, 102, 20);
 				settings_panel.add(txtLogin);
 				
-				JLabel txtLoginName = new JLabel(login_panel.logged_userName);
+				JLabel txtLoginName = new JLabel(login_panel.temporaryLogin);
 				txtLoginName.setFont(new Font("Calibri", Font.BOLD, 17));
 				txtLoginName.setBounds(1034, 18, 71, 20);
 				settings_panel.add(txtLoginName);
@@ -1002,12 +1210,14 @@ public class main_panel implements ChangeListener {
 				song.stop();
 				song.close();
 				}
-				login_panel.logged_user = "";
+				login_panel.temporaryLogin = "";
 				Logingui mlogin = new Logingui();
 				mlogin.frame.setVisible(true);
 				frame.dispose();
 			}
 		});
+		
+		
 		logout_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logout.png")));
 		logout_button.setOpaque(false);
 		logout_button.setContentAreaFilled(false);
@@ -1016,6 +1226,7 @@ public class main_panel implements ChangeListener {
 		logout_button.setRolloverEnabled(true);
 		logout_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logout-hover.png")));
 		menu_panel.add(logout_button);
+		
 		
 		JPanel logo_panel = new JPanel();
 		logo_panel.setBackground(SystemColor.controlHighlight);
@@ -1035,7 +1246,33 @@ public class main_panel implements ChangeListener {
 		logo_panel.add(logo_figure);
 		
 	
-		
+
+		if(mysqlConnect.language == 0)
+		{
+			myaccount_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pl/my_account_pl.png")));
+			myaccount_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pl/my_account-hover_pl.png")));
+			mymusic_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pl/mymusic_pl.png")));
+			mymusic_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pl/mymusic-hover_pl.png")));
+			shop_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pl/shop_pl.png")));
+			shop_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pl/shop-hover_pl.png")));
+			settings_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pl/settings_pl.png")));
+			settings_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pl/settings-hover_pl.png")));
+			logout_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pl/logout_pl.png")));
+			logout_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/pl/logout-hover_pl.png")));
+		}
+		else
+		{
+			myaccount_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/my_account.png")));
+			myaccount_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/my_account-hover.png")));
+			mymusic_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/mymusic.png")));
+			mymusic_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/mymusic-hover.png")));
+			shop_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/shop.png")));
+			shop_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/shop-hover.png")));
+			settings_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/settings.png")));
+			settings_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/settings-hover.png")));
+			logout_button.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logout.png")));
+			logout_button.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logout-hover.png")));
+		}
 
 		wyswietlanie_baz temp = new wyswietlanie_baz();
 		try {
@@ -1062,6 +1299,7 @@ public class main_panel implements ChangeListener {
 		 selectLightThemeButton.setBounds(627, 15, 39, 23);
 			selectLightThemeButton.addActionListener(new ActionListener() { //zmiana dla jasnego motywu
 				public void actionPerformed(ActionEvent e) {
+					mysqlConnect.sendLayoutToSQL(login_panel.temporaryLogin, 0);
 					//zmiana koloru wewnetrznego okna
 					chooseThemeLabel.setForeground(new Color(0,0,0));
 					chooseLanguage.setForeground(new Color(0,0,0));
@@ -1085,7 +1323,7 @@ public class main_panel implements ChangeListener {
 		
 		
 		
-		
+			showHiddenMenu();
 		
 			 JCheckBox selectDarkThemeButton = new JCheckBox(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/night_mode_off.png")));
 			 selectDarkThemeButton.setSelectedIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/night_mode.png")));
@@ -1096,6 +1334,7 @@ public class main_panel implements ChangeListener {
 				selectDarkThemeButton.setBounds(668, 15, 39, 23);
 				selectDarkThemeButton.addActionListener(new ActionListener() { //zmiana dla ciemnego motywu 
 					public void actionPerformed(ActionEvent setDarkTheme) {
+						mysqlConnect.sendLayoutToSQL(login_panel.temporaryLogin, 1);
 						//zmiana koloru wewnetrznego okna
 						chooseThemeLabel.setForeground(new Color(255, 255,255));
 						chooseLanguage.setForeground(new Color(255, 255,255));
@@ -1110,7 +1349,7 @@ public class main_panel implements ChangeListener {
 						player_panel.setBackground(Color.darkGray);
 						song_played_time.setForeground(Color.black);
 						full_song_time.setForeground(Color.black);
-						logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_left.png")));
+						logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
 					}
 				});
 				buttonGroup.add(selectDarkThemeButton);
@@ -1123,7 +1362,7 @@ public class main_panel implements ChangeListener {
 			chooseThemeLabel.setForeground(new Color(0,0,0));
 			chooseLanguage.setForeground(new Color(0,0,0));
 			txtLogin.setForeground(new Color(0,0,0));
-//panel ustawien - LIGHT THEME
+			//panel ustawien - LIGHT THEME
 			settings_panel.setBackground(SystemColor.controlHighlight);
 			myacc_panel.setBackground(new Color(189,192,208));
 			mymusic_panel.setBackground(new Color(189,192,208));
@@ -1150,18 +1389,15 @@ public class main_panel implements ChangeListener {
 			player_panel.setBackground(Color.darkGray);
 			song_played_time.setForeground(Color.black);
 			full_song_time.setForeground(Color.black);
-			logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_left.png")));
+			logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
 		}
+	
 	}
-	
-	
-	
-<<<<<<< HEAD
+//<<<<<<< HEAD
 	public void playSong(String song_name)
-=======
+//=======
 	
-	public void playSong(String song_directory)
->>>>>>> branch 'master' of https://github.com/ulewq/musv
+//>>>>>>> branch 'master' of https://github.com/ulewq/musv
 	{
 		
 		if (!isFirst)
@@ -1218,6 +1454,12 @@ public class main_panel implements ChangeListener {
        
 	}
 	
+	public void showPopup(MouseEvent me) {
+		if(me.isPopupTrigger())
+	         popupMenu.show(me.getComponent(), me.getX(), me.getY());
+	   }
+
+	
 	public void addSongs (int x,JPanel nazwa_panelu, JButton playbutton, JLabel song_time)
 	{ // songCount - ilsoc piosnek w bazie, nazwapanelu azwa aeludktoo bedziemy dodawac afelki z piosenkami
 		int i_pos = x;
@@ -1271,6 +1513,6 @@ public class main_panel implements ChangeListener {
 
 	}
 	}
-	
-}
+		
+	}
 

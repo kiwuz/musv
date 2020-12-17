@@ -56,7 +56,7 @@ public class admin_panel {
 		frame.getContentPane().add(main_jpanel);
 		main_jpanel.setLayout(null);
 		
-		JLabel admin_username = new JLabel(login_panel.logged_user);
+		JLabel admin_username = new JLabel(login_panel.temporaryLogin);
 		admin_username.setBounds(12, 13, 78, 30);
 		main_jpanel.add(admin_username);
 		
