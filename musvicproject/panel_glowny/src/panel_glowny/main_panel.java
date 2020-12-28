@@ -1296,10 +1296,10 @@ myacc_panel.add(changePhotoButton);
 		 selectLightThemeButton.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/day_mode.png")));
 		 selectLightThemeButton.setBorderPainted(false);
 		 selectLightThemeButton.setContentAreaFilled(false);
-		 selectLightThemeButton.setBounds(627, 15, 39, 23);
+		 selectLightThemeButton.setBounds(668, 10, 40, 40);
 			selectLightThemeButton.addActionListener(new ActionListener() { //zmiana dla jasnego motywu
 				public void actionPerformed(ActionEvent e) {
-					mysqlConnect.sendLayoutToSQL(login_panel.temporaryLogin, 0);
+					MysqlConnect.sendLayoutToSQL(login_panel.temporaryLogin, 1);
 					//zmiana koloru wewnetrznego okna
 					chooseThemeLabel.setForeground(new Color(0,0,0));
 					chooseLanguage.setForeground(new Color(0,0,0));
@@ -1314,27 +1314,29 @@ myacc_panel.add(changePhotoButton);
 					menu_panel.setBackground(new Color(31, 33, 38));
 					player_panel.setBackground(new Color(250, 250, 250));
 					logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+					selectLightThemeButton.setSelected(true);
 				}
 			});
 		
 			buttonGroup.add(selectLightThemeButton);
 			settings_panel.add(selectLightThemeButton);
-			selectLightThemeButton.setSelected(true);
 		
 		
 		
 			showHiddenMenu();
 		
-			 JCheckBox selectDarkThemeButton = new JCheckBox(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/night_mode_off.png")));
+			JCheckBox selectDarkThemeButton = new JCheckBox(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/night_mode_off.png")));
+			 
 			 selectDarkThemeButton.setSelectedIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/night_mode.png")));
 			 selectDarkThemeButton.setRolloverEnabled(true);
 			 selectDarkThemeButton.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/night_mode.png")));
 			 selectDarkThemeButton.setBorderPainted(false);
 			 selectDarkThemeButton.setContentAreaFilled(false);
-				selectDarkThemeButton.setBounds(668, 15, 39, 23);
+				selectDarkThemeButton.setBounds(627, 10, 40, 40);
 				selectDarkThemeButton.addActionListener(new ActionListener() { //zmiana dla ciemnego motywu 
 					public void actionPerformed(ActionEvent setDarkTheme) {
-						mysqlConnect.sendLayoutToSQL(login_panel.temporaryLogin, 1);
+						MysqlConnect.sendLayoutToSQL(login_panel.temporaryLogin, 2);
+		
 						//zmiana koloru wewnetrznego okna
 						chooseThemeLabel.setForeground(new Color(255, 255,255));
 						chooseLanguage.setForeground(new Color(255, 255,255));
@@ -1350,49 +1352,308 @@ myacc_panel.add(changePhotoButton);
 						song_played_time.setForeground(Color.black);
 						full_song_time.setForeground(Color.black);
 						logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+						selectDarkThemeButton.setSelected(true);
 					}
 				});
 				buttonGroup.add(selectDarkThemeButton);
 				settings_panel.add(selectDarkThemeButton);
-		selectLightThemeButton.setSelected(true);
+				
+				
+				
+				JCheckBox selectThemeByTimeButton = new JCheckBox(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/clock_theme_off.png")));
+				selectThemeByTimeButton.setSelectedIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/clock_theme.png")));
+				selectThemeByTimeButton.setRolloverEnabled(true);
+				selectThemeByTimeButton.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/clock_theme.png")));
+				selectThemeByTimeButton.setBorderPainted(false);
+				selectThemeByTimeButton.setContentAreaFilled(false);
+				selectThemeByTimeButton.setBounds(709, 10, 40, 40);
+				selectThemeByTimeButton.addActionListener(new ActionListener() { //zmiana dla ciemnego motywu 
+						public void actionPerformed(ActionEvent setDarkTheme) {
+							MysqlConnect.sendLayoutToSQL(login_panel.temporaryLogin, 3);
+							//zmiana koloru wewnetrznego okna
+							chooseThemeLabel.setForeground(new Color(255, 255,255));
+							chooseLanguage.setForeground(new Color(255, 255,255));
+							txtLogin.setForeground(new Color(255, 255,255));
+							settings_panel.setBackground(Color.GRAY); //panel ustawień - DARK THEME
+							myacc_panel.setBackground(Color.GRAY);
+							mymusic_panel.setBackground(Color.GRAY);
+							shop_panel.setBackground(Color.GRAY);
+							//zmiana koloru zewnetrznego okna
+							logo_panel.setBackground(Color.GRAY);
+							menu_panel.setBackground(new Color(31, 33, 38));
+							player_panel.setBackground(Color.darkGray);
+							song_played_time.setForeground(Color.black);
+							full_song_time.setForeground(Color.black);
+							logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+							selectThemeByTimeButton.setSelected(true);
+						}
+					});
+					buttonGroup.add(selectThemeByTimeButton);
+					settings_panel.add(selectThemeByTimeButton);
+
 		
-		
-		if(mysqlConnect.loadTheme() == false) {
-			//zmiana koloru wewnetrznego okna
-			chooseThemeLabel.setForeground(new Color(0,0,0));
-			chooseLanguage.setForeground(new Color(0,0,0));
-			txtLogin.setForeground(new Color(0,0,0));
-			//panel ustawien - LIGHT THEME
-			settings_panel.setBackground(SystemColor.controlHighlight);
-			myacc_panel.setBackground(new Color(189,192,208));
-			mymusic_panel.setBackground(new Color(189,192,208));
-			shop_panel.setBackground(new Color(189,192,208));
-			//zmiana koloru zewnetrznego okna
-			logo_panel.setBackground(SystemColor.controlHighlight);
-			menu_panel.setBackground(new Color(31, 33, 38));
-			player_panel.setBackground(new Color(250, 250, 250));
-			logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+				JCheckBox selectRockThemeButton = new JCheckBox(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/rock_mode_off.png")));
+				selectRockThemeButton.setSelectedIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/rock_mode.png")));
+				selectRockThemeButton.setRolloverEnabled(true);
+				selectRockThemeButton.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/rock_mode.png")));
+				selectRockThemeButton.setBorderPainted(false);
+				selectRockThemeButton.setContentAreaFilled(false);
+				selectRockThemeButton.setBounds(750, 10, 40, 40);
+				selectRockThemeButton.addActionListener(new ActionListener() { //zmiana dla ciemnego motywu 
+						public void actionPerformed(ActionEvent setDarkTheme) {
+							MysqlConnect.sendLayoutToSQL(login_panel.temporaryLogin, 4);
+							//zmiana koloru wewnetrznego okna
+							chooseThemeLabel.setForeground(new Color(255, 255,255));
+							chooseLanguage.setForeground(new Color(255, 255,255));
+							txtLogin.setForeground(new Color(255, 255,255));
+							settings_panel.setBackground(Color.DARK_GRAY); 
+							myacc_panel.setBackground(Color.DARK_GRAY);
+							mymusic_panel.setBackground(Color.DARK_GRAY);
+							shop_panel.setBackground(Color.DARK_GRAY);
+							//zmiana koloru zewnetrznego okna
+							logo_panel.setBackground(Color.DARK_GRAY);
+							menu_panel.setBackground(new Color(31, 33, 38));
+							player_panel.setBackground(Color.RED);
+							song_played_time.setForeground(Color.black);
+							full_song_time.setForeground(Color.black);
+							logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+							selectRockThemeButton.setSelected(true);
+						}
+					});
+					buttonGroup.add(selectRockThemeButton);
+					settings_panel.add(selectRockThemeButton);
+				
+					JCheckBox selectGirlModeButton = new JCheckBox(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/girl_mode_off.png")));
+					selectGirlModeButton.setSelectedIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/girl_mode.png")));
+					selectGirlModeButton.setRolloverEnabled(true);
+					selectGirlModeButton.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/girl_mode.png")));
+					selectGirlModeButton.setBorderPainted(false);
+					selectGirlModeButton.setContentAreaFilled(false);
+					selectGirlModeButton.setBounds(791, 10, 40, 40);
+					selectGirlModeButton.addActionListener(new ActionListener() { //zmiana dla ciemnego motywu 
+							public void actionPerformed(ActionEvent setDarkTheme) {
+								MysqlConnect.sendLayoutToSQL(login_panel.temporaryLogin, 5);
+								//zmiana koloru wewnetrznego okna
+								chooseThemeLabel.setForeground(new Color(255, 255,255));
+								chooseLanguage.setForeground(new Color(255, 255,255));
+								txtLogin.setForeground(new Color(255, 255,255));
+								settings_panel.setBackground(Color.PINK); //panel ustawień - DARK THEME
+								myacc_panel.setBackground(Color.PINK);
+								mymusic_panel.setBackground(Color.PINK);
+								shop_panel.setBackground(Color.PINK);
+								//zmiana koloru zewnetrznego okna
+								logo_panel.setBackground(Color.PINK);
+								menu_panel.setBackground(new Color(31, 33, 38));
+								player_panel.setBackground(Color.MAGENTA);
+								song_played_time.setForeground(Color.MAGENTA);
+								full_song_time.setForeground(Color.MAGENTA);
+								logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+								selectGirlModeButton.setSelected(true);
+							}
+						});
+						buttonGroup.add(selectGirlModeButton);
+						settings_panel.add(selectGirlModeButton);
+
+						
+					JCheckBox selectManModeButton = new JCheckBox(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/man_mode_off.png")));
+					selectManModeButton.setSelectedIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/man_mode.png")));
+					selectManModeButton.setRolloverEnabled(true);
+					selectManModeButton.setRolloverIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/man_mode.png")));
+					selectManModeButton.setBorderPainted(false);
+					selectManModeButton.setContentAreaFilled(false);
+					selectManModeButton.setBounds(832, 10, 40, 40);
+					selectManModeButton.addActionListener(new ActionListener() { //zmiana dla ciemnego motywu 
+							public void actionPerformed(ActionEvent setDarkTheme) {
+								MysqlConnect.sendLayoutToSQL(login_panel.temporaryLogin, 6);
+								
+								//zmiana koloru wewnetrznego okna
+								chooseThemeLabel.setForeground(new Color(255, 255,255));
+								chooseLanguage.setForeground(new Color(255, 255,255));
+								txtLogin.setForeground(new Color(255, 255,255));
+								settings_panel.setBackground(Color.CYAN); 
+								myacc_panel.setBackground(Color.CYAN);
+								mymusic_panel.setBackground(Color.CYAN);
+								shop_panel.setBackground(Color.CYAN);
+								//zmiana koloru zewnetrznego okna
+								logo_panel.setBackground(Color.CYAN);
+								menu_panel.setBackground(new Color(31, 33, 38));
+								player_panel.setBackground(Color.BLUE);
+								song_played_time.setForeground(Color.black);
+								full_song_time.setForeground(Color.black);
+								logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+								selectManModeButton.setSelected(true);
+							}
+						});
+					buttonGroup.add(selectManModeButton);
+					settings_panel.add(selectManModeButton);
+					
+					
+
+							
+					
+					
 			
+				
+
+		int layout = MysqlConnect.getIntFromSQL(login_panel.temporaryLogin, "Layout");
+		if(layout != 0) {
+		switch(layout) {
+			case 1:		
+				System.out.println("zaladowano layout 1");
+				chooseThemeLabel.setForeground(new Color(0,0,0));
+				chooseLanguage.setForeground(new Color(0,0,0));
+				txtLogin.setForeground(new Color(0,0,0));
+				settings_panel.setBackground(SystemColor.controlHighlight);
+				myacc_panel.setBackground(new Color(189,192,208));
+				mymusic_panel.setBackground(new Color(189,192,208));
+				shop_panel.setBackground(new Color(189,192,208));
+				logo_panel.setBackground(SystemColor.controlHighlight);
+				menu_panel.setBackground(new Color(31, 33, 38));
+				player_panel.setBackground(new Color(250, 250, 250));
+				logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+				selectLightThemeButton.setSelected(true);
+				break;
+		
+			case 2:	
+				System.out.println("zaladowano layout 2");
+				chooseThemeLabel.setForeground(new Color(255, 255,255));
+				chooseLanguage.setForeground(new Color(255, 255,255));
+				txtLogin.setForeground(new Color(255, 255,255));
+				settings_panel.setBackground(Color.GRAY); //panel ustawień - DARK THEME
+				myacc_panel.setBackground(Color.GRAY);
+				mymusic_panel.setBackground(Color.GRAY);
+				shop_panel.setBackground(Color.GRAY);
+				logo_panel.setBackground(Color.GRAY);
+				menu_panel.setBackground(new Color(31, 33, 38));
+				player_panel.setBackground(Color.darkGray);
+				song_played_time.setForeground(Color.black);
+				full_song_time.setForeground(Color.black);
+				logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+				selectDarkThemeButton.setSelected(true);
+				break;
+		
+			case 3:
+				System.out.println("zaladowano layout 3");
+				chooseThemeLabel.setForeground(new Color(255, 255,255));
+				chooseLanguage.setForeground(new Color(255, 255,255));
+				txtLogin.setForeground(new Color(255, 255,255));
+				settings_panel.setBackground(Color.GRAY); //panel ustawień - DARK THEME
+				myacc_panel.setBackground(Color.GRAY);
+				mymusic_panel.setBackground(Color.GRAY);
+				shop_panel.setBackground(Color.GRAY);		
+				logo_panel.setBackground(Color.GRAY);
+				menu_panel.setBackground(new Color(31, 33, 38));
+				player_panel.setBackground(Color.darkGray);
+				song_played_time.setForeground(Color.black);
+				full_song_time.setForeground(Color.black);
+				logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+				selectThemeByTimeButton.setSelected(true);
+				break;
+		
+			case 4:
+				System.out.println("zaladowano layout 4");
+				chooseThemeLabel.setForeground(new Color(255, 255,255));
+				chooseLanguage.setForeground(new Color(255, 255,255));
+				txtLogin.setForeground(new Color(255, 255,255));
+				settings_panel.setBackground(Color.DARK_GRAY); 
+				myacc_panel.setBackground(Color.DARK_GRAY);
+				mymusic_panel.setBackground(Color.DARK_GRAY);
+				shop_panel.setBackground(Color.DARK_GRAY);
+				logo_panel.setBackground(Color.DARK_GRAY);
+				menu_panel.setBackground(new Color(31, 33, 38));
+				player_panel.setBackground(Color.RED);
+				song_played_time.setForeground(Color.black);
+				full_song_time.setForeground(Color.black);
+				logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));	
+				selectRockThemeButton.setSelected(true);
+				break;
+		
+			case 5:
+				System.out.println("zaladowano layout 5");
+				chooseThemeLabel.setForeground(new Color(255, 255,255));
+				chooseLanguage.setForeground(new Color(255, 255,255));
+				txtLogin.setForeground(new Color(255, 255,255));
+				settings_panel.setBackground(Color.PINK); 
+				myacc_panel.setBackground(Color.PINK);
+				mymusic_panel.setBackground(Color.PINK);
+				shop_panel.setBackground(Color.PINK);
+				logo_panel.setBackground(Color.PINK);
+				menu_panel.setBackground(new Color(31, 33, 38));
+				player_panel.setBackground(Color.MAGENTA);
+				song_played_time.setForeground(Color.MAGENTA);
+				full_song_time.setForeground(Color.MAGENTA);
+				logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+				selectGirlModeButton.setSelected(true);
+				break;
+		
+			case 6:	
+				System.out.println("zaladowano layout 6");
+				chooseThemeLabel.setForeground(new Color(255, 255,255));
+				chooseLanguage.setForeground(new Color(255, 255,255));
+				txtLogin.setForeground(new Color(255, 255,255));
+				settings_panel.setBackground(Color.CYAN); 
+				myacc_panel.setBackground(Color.CYAN);
+				mymusic_panel.setBackground(Color.CYAN);
+				shop_panel.setBackground(Color.CYAN);
+				logo_panel.setBackground(Color.CYAN);
+				menu_panel.setBackground(new Color(31, 33, 38));
+				player_panel.setBackground(Color.BLUE);
+				song_played_time.setForeground(Color.black);
+				full_song_time.setForeground(Color.black);
+				logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+				selectManModeButton.setSelected(true);
+				break;
+			}
 		}
+		else if (MysqlConnect.getStringFromSQL(login_panel.temporaryLogin, "Gender").equals("Male")) {
+				chooseThemeLabel.setForeground(new Color(255, 255,255));
+				chooseLanguage.setForeground(new Color(255, 255,255));
+				txtLogin.setForeground(new Color(255, 255,255));
+				settings_panel.setBackground(Color.CYAN); 
+				myacc_panel.setBackground(Color.CYAN);
+				mymusic_panel.setBackground(Color.CYAN);
+				shop_panel.setBackground(Color.CYAN);
+				logo_panel.setBackground(Color.CYAN);
+				menu_panel.setBackground(new Color(31, 33, 38));
+				player_panel.setBackground(Color.BLUE);
+				song_played_time.setForeground(Color.black);
+				full_song_time.setForeground(Color.black);
+				logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+				selectManModeButton.setSelected(true);
+			}
+		else if(MysqlConnect.getStringFromSQL(login_panel.temporaryLogin, "Gender").equals("Female")){
+				chooseThemeLabel.setForeground(new Color(255, 255,255));
+				chooseLanguage.setForeground(new Color(255, 255,255));
+				txtLogin.setForeground(new Color(255, 255,255));
+				settings_panel.setBackground(Color.PINK); 
+				myacc_panel.setBackground(Color.PINK);
+				mymusic_panel.setBackground(Color.PINK);
+				shop_panel.setBackground(Color.PINK);
+				logo_panel.setBackground(Color.PINK);
+				menu_panel.setBackground(new Color(31, 33, 38));
+				player_panel.setBackground(Color.MAGENTA);
+				song_played_time.setForeground(Color.MAGENTA);
+				full_song_time.setForeground(Color.MAGENTA);
+				logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+				selectGirlModeButton.setSelected(true);
+			}
 		else {
-			//zmiana koloru wewnetrznego okna
-			chooseThemeLabel.setForeground(new Color(255, 255,255));
-			chooseLanguage.setForeground(new Color(255, 255,255));
-			txtLogin.setForeground(new Color(255, 255,255));
-			settings_panel.setBackground(Color.GRAY); //panel ustawień - DARK THEME
-			myacc_panel.setBackground(Color.GRAY);
-			mymusic_panel.setBackground(Color.GRAY);
-			shop_panel.setBackground(Color.GRAY);
-			//zmiana koloru zewnetrznego okna
-			logo_panel.setBackground(Color.GRAY);
-			menu_panel.setBackground(new Color(31, 33, 38));
-			player_panel.setBackground(Color.darkGray);
-			song_played_time.setForeground(Color.black);
-			full_song_time.setForeground(Color.black);
-			logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+				chooseThemeLabel.setForeground(new Color(0,0,0));
+				chooseLanguage.setForeground(new Color(0,0,0));
+				txtLogin.setForeground(new Color(0,0,0));
+				settings_panel.setBackground(SystemColor.controlHighlight);
+				myacc_panel.setBackground(new Color(189,192,208));
+				mymusic_panel.setBackground(new Color(189,192,208));
+				shop_panel.setBackground(new Color(189,192,208));
+				logo_panel.setBackground(SystemColor.controlHighlight);
+				menu_panel.setBackground(new Color(31, 33, 38));
+				player_panel.setBackground(new Color(250, 250, 250));
+				logo_figure.setIcon(new ImageIcon(main_panel.class.getResource("/panel_glowny/img/logo_right.png")));
+				selectLightThemeButton.setSelected(true);
+			
+			}
+				
 		}
-	
-	}
 //<<<<<<< HEAD
 	public void playSong(String song_name)
 //=======
